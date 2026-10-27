@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="cs332_lab6_9/cs332_lab6_9.vcxproj" />
+</Solution>
