@@ -1,17 +1,14 @@
-﻿// ============================================================================
-// part1.cs — Задания 1-2 + фундаментальные типы.
-//   1. Правильные многогранники (тетраэдр, гексаэдр, октаэдр, икосаэдр,
+﻿//   1. Правильные многогранники (тетраэдр, гексаэдр, октаэдр, икосаэдр,
 //      додекаэдр).
 //   2. Аффинные преобразования МАТРИЦАМИ (относительно начала координат):
 //      смещение, поворот, масштаб.
-// Фундамент: Point3, Polygon, Polyhedron, Matrix4 — общие типы для всех частей.
-// Никаких вызовов чужих методов-заданий: только фундамент.
-// ============================================================================
+// Point3, Polygon, Polyhedron, Matrix4
 using Lab6.Geometry;
 using System.Globalization;
 
 namespace Lab6.Geometry
 {
+    //точка в трехмерном пространстве
     public readonly record struct Point3(double X, double Y, double Z)
     {
         public static Point3 Zero => new(0, 0, 0);
@@ -25,32 +22,36 @@ namespace Lab6.Geometry
         public static Point3 operator *(Point3 a, double k) =>
             new(a.X * k, a.Y * k, a.Z * k);
 
+        //расстояние от точки до точкиыы
         public static double Distance(Point3 a, Point3 b)
         {
             var d = a - b;
             return Math.Sqrt(d.X * d.X + d.Y * d.Y + d.Z * d.Z);
         }
 
+        //векторное произведение
         public static Point3 Cross(Point3 a, Point3 b) => new(
             a.Y * b.Z - a.Z * b.Y,
             a.Z * b.X - a.X * b.Z,
             a.X * b.Y - a.Y * b.X);
 
+        //скалярное
         public static double Dot(Point3 a, Point3 b) =>
             a.X * b.X + a.Y * b.Y + a.Z * b.Z;
-
+        //нормализация (в единичный)
         public Point3 Normalized()
         {
             double len = Math.Sqrt(X * X + Y * Y + Z * Z);
             return len < 1e-12 ? Zero : new Point3(X / len, Y / len, Z / len);
         }
-
+        //противоположный
         public Point3 Negated() => new(-X, -Y, -Z);
 
         public override string ToString() =>
             $"({X:0.###}; {Y:0.###}; {Z:0.###})";
     }
 
+    //грань
     public sealed class Polygon
     {
         public int[] VertexIndices { get; }
@@ -62,6 +63,7 @@ namespace Lab6.Geometry
             VertexIndices = vertexIndices.ToArray();
         }
 
+        //нормаль грани
         public Point3 Normal(IReadOnlyList<Point3> vertices)
         {
             var a = vertices[VertexIndices[0]];
@@ -70,6 +72,7 @@ namespace Lab6.Geometry
             return Point3.Cross(b - a, c - a).Normalized();
         }
 
+        //центроид
         public Point3 Center(IReadOnlyList<Point3> vertices)
         {
             double x = 0, y = 0, z = 0;
@@ -88,6 +91,7 @@ namespace Lab6.Geometry
         public List<Point3> Vertices { get; } = new();
         public List<Polygon> Faces { get; } = new();
 
+        //центроид всех вершин
         public Point3 Center()
         {
             if (Vertices.Count == 0) return Point3.Zero;
@@ -97,12 +101,14 @@ namespace Lab6.Geometry
             return new Point3(x / n, y / n, z / n);
         }
 
+        //применить преобразование афинное ко всем вершинам
         public void Apply(Matrix4 matrix)
         {
             for (int i = 0; i < Vertices.Count; i++)
                 Vertices[i] = matrix.TransformPoint(Vertices[i]);
         }
 
+        //копирка
         public Polyhedron Clone()
         {
             var copy = new Polyhedron();
@@ -132,37 +138,42 @@ namespace Lab6.Geometry
             M41 = m41; M42 = m42; M43 = m43; M44 = m44;
         }
 
+
+        //еденичка
         public static Matrix4 Identity => new(
             1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
+        //сдвиг
         public static Matrix4 Translation(double tx, double ty, double tz) => new(
             1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0,
             tx, ty, tz, 1);
 
+        //размер
         public static Matrix4 Scale(double sx, double sy, double sz) => new(
             sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, 0, 0, 0, 0, 1);
 
+        //поворот
         public static Matrix4 RotationX(double r)
         {
             double c = Math.Cos(r), s = Math.Sin(r);
             return new Matrix4(
                 1, 0, 0, 0, 0, c, s, 0, 0, -s, c, 0, 0, 0, 0, 1);
         }
-
+        //поворот
         public static Matrix4 RotationY(double r)
         {
             double c = Math.Cos(r), s = Math.Sin(r);
             return new Matrix4(
                 c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, 0, 0, 0, 1);
         }
-
+        //поворот
         public static Matrix4 RotationZ(double r)
         {
             double c = Math.Cos(r), s = Math.Sin(r);
             return new Matrix4(
                 c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
         }
-
+        //отражение через плоскость
         public static Matrix4 Reflection(string plane) => plane.Trim().ToUpperInvariant() switch
         {
             "XY" => Scale(1, 1, -1),
@@ -171,6 +182,7 @@ namespace Lab6.Geometry
             _ => throw new ArgumentException("Плоскость должна быть XY, XZ или YZ.")
         };
 
+        //обратная матрица
         public Matrix4 Inverse()
         {
             double a = M11, b = M12, c = M13;
@@ -198,6 +210,7 @@ namespace Lab6.Geometry
                 invTr.X, invTr.Y, invTr.Z, 1);
         }
 
+        //перемножение двух
         public static Matrix4 operator *(Matrix4 a, Matrix4 b) => new(
             a.M11 * b.M11 + a.M12 * b.M21 + a.M13 * b.M31 + a.M14 * b.M41,
             a.M11 * b.M12 + a.M12 * b.M22 + a.M13 * b.M32 + a.M14 * b.M42,
@@ -215,6 +228,7 @@ namespace Lab6.Geometry
             a.M41 * b.M12 + a.M42 * b.M22 + a.M43 * b.M32 + a.M44 * b.M42,
             a.M41 * b.M13 + a.M42 * b.M23 + a.M43 * b.M33 + a.M44 * b.M43,
             a.M41 * b.M14 + a.M42 * b.M24 + a.M43 * b.M34 + a.M44 * b.M44);
+
 
         public Point3 TransformPoint(Point3 p)
         {
@@ -235,6 +249,7 @@ namespace Lab6.Builders
     {
         private static readonly double Phi = (1 + Math.Sqrt(5)) / 2;
 
+        //тетраэдр
         public static Polyhedron Tetrahedron()
         {
             var m = new Polyhedron();
@@ -251,6 +266,7 @@ namespace Lab6.Builders
             return m;
         }
 
+        //гексаэдр
         public static Polyhedron Hexahedron(double size = 1)
         {
             var m = new Polyhedron();
@@ -269,7 +285,7 @@ namespace Lab6.Builders
             });
             return m;
         }
-
+        //октаэдр
         public static Polyhedron Octahedron(double size = 1)
         {
             var m = new Polyhedron();
@@ -289,6 +305,7 @@ namespace Lab6.Builders
             return m;
         }
 
+        //икосаэдр
         public static Polyhedron Icosahedron(double size = 1)
         {
             double phi = Phi;
@@ -318,7 +335,7 @@ namespace Lab6.Builders
             foreach (var face in f) m.Faces.Add(new Polygon(face));
             return m;
         }
-
+        //додекаэдр
         public static Polyhedron Dodecahedron(double size = 1)
         {
             if (!double.IsFinite(size) || size <= 0)
@@ -415,6 +432,7 @@ namespace Lab6.Transforms
         public static Matrix4 Translate(double x, double y, double z) =>
             Matrix4.Translation(x, y, z);
 
+        //перевод из градусов в радианы
         public static Matrix4 RotateAroundOrigin(string axis, double degrees)
         {
             double r = degrees * Math.PI / 180;
@@ -426,7 +444,7 @@ namespace Lab6.Transforms
                 _ => throw new ArgumentException("Axis must be X, Y or Z")
             };
         }
-
+        //масштаб
         public static Matrix4 ScaleAroundOrigin(double factor) =>
             Matrix4.Scale(factor, factor, factor);
     }
