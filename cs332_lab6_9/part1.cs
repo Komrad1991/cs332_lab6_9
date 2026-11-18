@@ -69,7 +69,26 @@ namespace Lab6.Geometry
             var a = vertices[VertexIndices[0]];
             var b = vertices[VertexIndices[1]];
             var c = vertices[VertexIndices[2]];
-            return Point3.Cross(b - a, c - a).Normalized();
+
+            var normal = Point3.Cross(b - a, c - a).Normalized();
+
+            // Центр всего многогранника
+            var modelCenter = Point3.Zero;
+            foreach (var vertex in vertices)
+                modelCenter += vertex;
+            modelCenter = modelCenter * (1.0 / vertices.Count);
+
+            // Центр грани
+            var faceCenter = Point3.Zero;
+            foreach (var index in VertexIndices)
+                faceCenter += vertices[index];
+            faceCenter = faceCenter * (1.0 / VertexIndices.Length);
+
+            // Разворачиваем нормаль наружу
+            if (Point3.Dot(normal, faceCenter - modelCenter) < 0)
+                normal = normal.Negated();
+
+            return normal;
         }
 
         //центроид

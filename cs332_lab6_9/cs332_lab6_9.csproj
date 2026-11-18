@@ -12,5 +12,12 @@
     <PackageReference Include="Avalonia.Desktop" Version="12.1.6" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.6" />
   </ItemGroup>
-
+	<ItemGroup>
+		<Compile Remove="lab7\**" />
+		<Compile Remove="lab8\**" />
+		<Compile Remove="lab9\**" />
+		<None Remove="lab7\**" />
+		<None Remove="lab8\**" />
+		<None Remove="lab9\**" />
+	</ItemGroup>
 </Project>

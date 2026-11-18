@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<StartupObject>Lab9.Program</StartupObject>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="12.1.6" />
+		<PackageReference Include="Avalonia.Desktop" Version="12.1.6" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.6" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\cs332_lab6_9\part1.cs" Link="Shared\part1.cs" />
+		<Compile Include="..\cs332_lab6_9\part2.cs" Link="Shared\part2.cs" />
+		<Compile Include="..\cs332_lab6_9\part3.cs" Link="Shared\part3.cs" />
+
+		<Compile Include="part1.cs" />
+		<Compile Include="part2.cs" />
+		<Compile Include="part3.cs" />
+		<Compile Include="Program.cs" />
+	</ItemGroup>
+</Project>

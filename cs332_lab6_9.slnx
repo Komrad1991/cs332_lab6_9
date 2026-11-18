@@ -1,3 +1,6 @@
 <Solution>
   <Project Path="cs332_lab6_9/cs332_lab6_9.csproj" />
+  <Project Path="lab7/lab7.csproj" Id="8767dbdb-c66a-449c-8cc3-39f007353cac" />
+  <Project Path="lab8/lab8.csproj" Id="f8515ab2-140e-42de-8c8f-7ce2cc0a24c8" />
+  <Project Path="lab9/lab9.csproj" Id="17979aaf-d08e-466f-90d0-bbe460665a20" />
 </Solution>
